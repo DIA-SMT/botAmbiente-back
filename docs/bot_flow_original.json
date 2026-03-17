@@ -1,0 +1,1180 @@
+{
+  "name": "botAmbiente_WP",
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "puntos_verdes",
+              "value": "[\"Lamadrid 3700\", \"Viamonte e Italia\", \"Miguel Lillo e Inca Garcilaso\"]",
+              "type": "array"
+            },
+            {
+              "id": "id-2",
+              "name": "limite_escombros",
+              "value": 5,
+              "type": "number"
+            },
+            {
+              "id": "id-3",
+              "name": "limite_poda",
+              "value": 10,
+              "type": "number"
+            },
+            {
+              "id": "id-4",
+              "name": "limite_otros_m3",
+              "value": 1,
+              "type": "number"
+            },
+            {
+              "id": "id-5",
+              "name": "sla_horas",
+              "value": 72,
+              "type": "number"
+            },
+            {
+              "id": "id-6",
+              "name": "zona_norte_dias",
+              "value": "[\"Lunes\", \"Martes\", \"Viernes\"]",
+              "type": "array"
+            },
+            {
+              "id": "id-7",
+              "name": "zona_sur_dias",
+              "value": "[\"Martes\", \"Jueves\", \"Sábado\"]",
+              "type": "array"
+            },
+            {
+              "id": "id-8",
+              "name": "horario_retiro",
+              "value": "14:30",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "db776a62-8f7c-4b2c-ab73-5ee57e180464",
+      "name": "Workflow Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1456,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=={{ $('Webhook1').item.json.body.last_input_text || '' }}\n\n[INFO_SISTEMA: FOTO_ADJUNTA={{$('Webhook1').item.json.body.last_input_text.endsWith('jpeg') ? 'SI' : 'NO' }}]",
+        "hasOutputParser": true,
+        "options": {
+          "systemMessage": "=Eres el asistente virtual oficial de la Secretaría de Ambiente de San Miguel de Tucumán.\nTu canal de comunicación es WhatsApp.\nUsa un tono cordial, directo y resolutivo. Emojis moderados 🌿🚛.\nTu función es RECEPCIONAR PEDIDOS Y CONSULTAS.\n\n🎯 PRINCIPIO FUNDAMENTAL\nSIEMPRE responde primero con la información concreta que el vecino necesita.\nNO hagas interrogatorios innecesarios.\nNO des vueltas.\nSi luego hace falta un dato adicional, pregúntalo después de brindar la información principal.\n\nSi el usuario solo pide información, responde y finaliza. No repreguntes cosas irrelevantes.\n\n🚫 REGLAS DE ORO\n\nNO GEOLOCALIZACIÓN NI CERCANÍA:\nNo calcules distancias.\nNo valides zonas.\nNo preguntes barrio.\nNo ofrezcas \"el punto más cercano\".\nEntrega la lista fija y el mapa.\n\nMODO CONSULTA vs REGISTRO:\nSi el usuario solo pide información → responde y usa intent: \"consultando_datos\".\nSolo genera intent final cuando realmente quiere iniciar un trámite y tengas todos los datos obligatorios.\n\nFOTOS SIN TEXTO:\nCuando pidas una foto, SIEMPRE aclara:\n\"Por favor envía la foto SOLA, sin escribir texto en el mismo mensaje\".\n\n\n🛑 REGLA DE CIERRE OBLIGATORIO\n\nSi el usuario solo realiza una consulta informativa\ny la respuesta ya fue brindada correctamente,\nDEBES finalizar la respuesta ahí.\n\nNO ofrezcas seguir ayudando.\nNO agregues: \"Si querés...\"\nNO propongas pasos adicionales.\nNO vuelvas a pedir datos.\nNO sugieras describir mejor el problema.\n\nSolo responde la información y termina el mensaje.\n\n--------------------------------------------------\n📘 INFORMACIÓN OFICIAL DE PROGRAMAS MUNICIPALES\n--------------------------------------------------\n\nSE-PA-RÁ (Recolección diferenciada):\n- Programa de separación en origen.\n- Solo residuos reciclables LIMPIOS y SECOS.\n- Días: Miércoles y Sábados.\n- Sacar antes de las 9:00 hs.\n- Pasa un camión específico del programa.\n- Basado en Ordenanza 5079.\n- Forma parte del sistema GIRSU y economía circular.\n\nE-DU-CÁ (Educación Ambiental):\n- Programa municipal de educación ambiental.\n- Destinado a instituciones públicas y privadas.\n- Basado en Ley Nacional 27.621.\n- Objetivo: generar conciencia ambiental y formación ciudadana.\n- Para inscribirse se necesita:\n  INSTITUCIÓN, DIRECCIÓN, RESPONSABLE, CANTIDAD DE ALUMNOS.\n\nCONTROLÁ:\n- Programa municipal de control ambiental.\n- Controla:\n   • Gestión de residuos (GIRSU)\n   • Ruidos molestos (más de 60 decibeles)\n   • Control bromatológico (seguridad alimentaria)\n- Recibe reclamos y denuncias ambientales.\n\n--------------------------------------------------\n📍 PUNTOS VERDES (INFORMACIÓN DIRECTA)\n--------------------------------------------------\n\nSi el usuario pregunta por puntos verdes:\n\nResponde directamente con:\n\nLamadrid 3700  \nViamonte e Italia  \nMiguel Lillo e Inca Garcilaso  \n\nMapa de todos los puntos verdes:\nhttps://www.google.com/maps/d/u/0/viewer?mid=1vyRrLsGdDi63Z7VJsOJoTMrHtkW2wVY&ll=-26.816268242965943%2C-65.20796133535157&z=13\n\n- Los contenedores están disponibles las 24 horas.\n- No preguntes si va hoy.\n- No preguntes cantidad salvo que el caso lo requiera.\n- Los neumáticos NO tienen retiro domiciliario. Deben llevarse allí.\n\nEste caso normalmente queda en intent: \"consultando_datos\".\n\n--------------------------------------------------\nFLUJOS DE ATENCIÓN\n--------------------------------------------------\n\nCONSULTA DE ESTADO (Intent: consultar_estado)\nSi el usuario pregunta por su pedido:\nNO pidas DNI ni número.\nGenera inmediatamente el intent consultar_estado.\n\nA. RETIRO DE RESIDUOS NO HABITUALES (Intent: retiro_especial)\nConsulta informativa:\nOfrece opciones claras:\n1. Escombros / construcción.\n2. Restos de poda.\n3. Otros (muebles, chatarra, ramas enfardadas).\n\nAcción:\nSi solicita retiro:\nExige FOTO y DIRECCIÓN.\nRecordar:\n\"⚠️ NO saques los residuos a la vereda todavía. Esperá nuestra confirmación.\"\n\nNeumáticos:\nInformar que deben llevarse a Puntos Verdes.\n\nB. RECLAMO RECOLECCIÓN (Intent: reclamo_recoleccion)\nPedir:\n- Dirección exacta.\n- Desde cuándo no pasa.\n\nC. PROGRAMAS AMBIENTALES (Intent: programas_ambientales)\nSolo usar cuando el usuario quiere inscribirse y tengas todos los datos.\nSi solo consulta → intent: consultando_datos.\n\n--------------------------------------------------\nFORMATO DE SALIDA (JSON)\n--------------------------------------------------\n\nSi faltan datos obligatorios, usa intent: \"consultando_datos\" y pregunta solo lo indispensable.\n\n{\n \"intent\": \"retiro_especial\" | \"reclamo_recoleccion\" | \"programas_ambientales\" | \"derivaciones\" | \"saludo\" | \"consultando_datos\" | \"consultar_estado\",\n \"waste_type\": \"escombros\" | \"poda\" | \"otros\" | null,\n \"quantity_description\": \"texto\",\n \"address\": \"texto\",\n \"has_photo\": boolean,\n \"program_type\": \"separa\" | \"educa\" | \"transforma\" | null,\n \"institution_name\": \"texto\",\n \"responsible_person\": \"texto\",\n \"student_count\": numero,\n \"additional_info\": \"Respuesta clara, directa y sin rodeos al vecino.\"\n}"
+        }
+      },
+      "id": "5e95c946-7147-43a1-930b-011ec07c1906",
+      "name": "Main AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -1216,
+        528
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Webhook1').item.json.body.key }}"
+      },
+      "id": "632451f7-cb97-45af-a21d-949c37ca7042",
+      "name": "Conversation Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -1168,
+        784
+      ]
+    },
+    {
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n\t\"type\": \"object\",\n\t\"properties\": {\n\t\t\"intent\": {\n\t\t\t\"type\": \"string\",\n\t\t\t\"enum\": [\"retiro_especial\", \"reclamo_recoleccion\", \"programas_ambientales\", \"derivaciones\",\"saludo\",\"consultando_datos\",\"consultar_estado\"]\n\t\t},\n\t\t\"waste_type\": {\n\t\t\t\"type\": [\"string\", \"null\"],\n\t\t\t\"enum\": [\"escombros\", \"poda\", \"otros\", null]\n\t\t},\n\t\t\"quantity_description\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"address\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"has_photo\": {\n\t\t\t\"type\": \"boolean\"\n\t\t},\n\t\t\"program_type\": {\n\t\t\t\"type\": [\"string\", \"null\"],\n\t\t\t\"enum\": [\"separa\", \"educa\", \"transforma\", \"puntos_verdes\", null]\n\t\t},\n\t\t\"days_without_service\": {\n\t\t\t\"type\": \"number\"\n\t\t},\n\t\t\"institution_name\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"responsible_person\": {\n\t\t\t\"type\": \"string\"\n\t\t},\n\t\t\"student_count\": {\n\t\t\t\"type\": \"number\"\n\t\t},\n\t\t\"additional_info\": {\n\t\t\t\"type\": \"string\"\n\t\t}\n\t}\n}"
+      },
+      "id": "b9ded432-d7a2-41fc-8f24-d733e97b2ecb",
+      "name": "Structured Output Parser",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        -1024,
+        752
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "retiro_especial",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "c235ef8f-72cb-46b6-8397-6afb61696be4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Retiro Especial"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "reclamo_recoleccion",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "349bed98-e2d6-4c63-a315-eaa77aca38dd"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Reclamo Recolección"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "programas_ambientales",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "6c6003b3-bfa8-497b-8754-c60dd41a70a5"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Programas Ambientales"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "992defbe-f152-44aa-930b-8cabdc9c0053",
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "consultar_estado",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Seguimiento"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "derivaciones",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0d937ae6-fdf1-4388-8b74-c7091914a4bf"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Derivaciones"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "aa983d41-1298-4bdd-9ee0-3d0950d90282",
+                    "leftValue": "={{ $json.output.intent }}",
+                    "rightValue": "=saludo || consultando_datos",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "saludo"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a32a05cc-2d38-4d79-987a-51ed0ead6e7a",
+      "name": "Route by Intent",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -592,
+        496
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.output.has_photo === true || /^https?:\\/\\/.*\\.(jpeg|jpg|png|gif|webp|bmp)((\\?|#).*)?$/i.test($('Webhook1').item.json.body.last_input_text) }}",
+              "rightValue": "true",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "dc2c9bde-7e0e-4cd1-9a0b-f8b3d0070554",
+      "name": "Check Photo Received",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -368,
+        192
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "ticket_type",
+              "value": "Pedido No Habitual",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "waste_type",
+              "value": "={{ $json.output.waste_type }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "quantity",
+              "value": "={{ $json.output.quantity_description }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "address",
+              "value": "={{ $json.output.address }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "chat_id",
+              "value": "={{ $('Webhook1').item.json.body.whatsapp_phone }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "user_name",
+              "value": "={{ $('Webhook1').item.json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "status",
+              "value": "Pendiente Validación Imagen",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "sla_deadline",
+              "value": "={{ $now.plus({hours: 72}).toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "66f73bd8-09da-47b5-96a2-60b6f522e9c3",
+              "name": "live_chat_url",
+              "value": "={{ $('Webhook1').item.json.body.live_chat_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "caade647-afe1-41f5-99ae-d34bf08d1034",
+      "name": "Prepare Retiro Ticket",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -128,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "ticket_type",
+              "value": "Falta de Recolección",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "address",
+              "value": "={{ $json.output.address }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "days_without_service",
+              "value": "={{ $json.output.days_without_service }}",
+              "type": "number"
+            },
+            {
+              "id": "id-4",
+              "name": "chat_id",
+              "value": "={{ $('Webhook1').item.json.body.whatsapp_phone }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "user_name",
+              "value": "={{ $('Webhook1').item.json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "id-6",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "status",
+              "value": "Pendiente Verificación GPS",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "sla_deadline",
+              "value": "={{ $now.plus({hours: 72}).toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "8cbf8381-ddd0-43f6-9e6d-91157e24f0d1",
+              "name": "live_chat_url",
+              "value": "={{ $('Webhook1').item.json.body.live_chat_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ffee15c7-66f2-4854-a315-49fb8b351876",
+      "name": "Prepare Reclamo Ticket",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "id-1",
+              "name": "program_type",
+              "value": "={{ $json.output.program_type }}",
+              "type": "string"
+            },
+            {
+              "id": "id-2",
+              "name": "institution_name",
+              "value": "={{ $json.output.institution_name || 'No especificado' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-3",
+              "name": "address",
+              "value": "={{ $json.output.address || 'No especificado' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-4",
+              "name": "responsible_person",
+              "value": "={{ $json.output.responsible_person || 'No especificado' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-5",
+              "name": "student_count",
+              "value": "={{ $json.output.student_count || 0 }}",
+              "type": "number"
+            },
+            {
+              "id": "id-6",
+              "name": "additional_info",
+              "value": "={{ $json.output.additional_info || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "id-7",
+              "name": "chat_id",
+              "value": "={{ $('Webhook1').item.json.body.whatsapp_phone }}",
+              "type": "string"
+            },
+            {
+              "id": "id-8",
+              "name": "user_name",
+              "value": "={{ $('Webhook1').item.json.body.name }}",
+              "type": "string"
+            },
+            {
+              "id": "id-9",
+              "name": "timestamp",
+              "value": "={{ $now.toISO() }}",
+              "type": "string"
+            },
+            {
+              "id": "d8d08434-519c-4dd8-8afd-9d78583ea336",
+              "name": "live_chat_url",
+              "value": "={{ $('Webhook1').item.json.body.live_chat_url }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "8a6ace37-c345-44ca-bca2-888b3afe517b",
+      "name": "Prepare Program Request",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -336,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "id-1",
+              "leftValue": "={{ $json.body.last_input_text }}",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              },
+              "rightValue": "jpeg"
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c17635a4-a908-4497-8673-d59bacb64f54",
+      "name": "Check if Photo Attached",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1712,
+        496
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        1120
+      ],
+      "id": "b684233e-6b3d-4830-810b-5098c9616f12",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "e02e4aa8-cf57-4849-95ff-f3e9e69f1d75",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1904,
+        496
+      ],
+      "id": "35ce8d9e-e61c-459d-afb3-42eec8a6f7e6",
+      "name": "Webhook1",
+      "webhookId": "e02e4aa8-cf57-4849-95ff-f3e9e69f1d75"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": {{ $('Webhook1').item.json.body.id }},\n  \"data\": {\n    \"version\": \"v2\",\n    \"content\": {\n      \"type\": \"whatsapp\",\n      \"messages\": [\n        {\n          \"type\": \"text\",\n          \"text\": {{ JSON.stringify($json.output.additional_info) }}\n        }\n      ]\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -816,
+        464
+      ],
+      "id": "7becc0f8-3507-46ea-adbf-aa05ebf804bd",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "q0FwYmwx2wldyJEh",
+          "name": "manychat ambiente"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        912
+      ],
+      "id": "a6b4dd16-21e6-4ccb-9ac8-c8b78cc8aa76",
+      "name": "No Operation, do nothing1"
+    },
+    {
+      "parameters": {
+        "tableId": "program_requests",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "program_type",
+              "fieldValue": "={{ $json.program_type }}"
+            },
+            {
+              "fieldId": "institution_name",
+              "fieldValue": "={{ $json.institution_name }}"
+            },
+            {
+              "fieldId": "address",
+              "fieldValue": "={{ $json.address }}"
+            },
+            {
+              "fieldId": "responsible_person",
+              "fieldValue": "={{ $json.responsible_person }}"
+            },
+            {
+              "fieldId": "student_count",
+              "fieldValue": "={{ $json.student_count }}"
+            },
+            {
+              "fieldId": "chat_id",
+              "fieldValue": "={{ $json.chat_id }}"
+            },
+            {
+              "fieldId": "user_name",
+              "fieldValue": "={{ $json.user_name }}"
+            },
+            {
+              "fieldId": "original_timestamp",
+              "fieldValue": "={{ $json.timestamp }}"
+            },
+            {
+              "fieldId": "live_chat_url",
+              "fieldValue": "={{ $json.live_chat_url }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        560
+      ],
+      "id": "5dbecf39-eab1-452d-a57c-aece8395674b",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Ubh6Mgod1BscFiV4",
+          "name": "Supabase ambiente"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "tickets",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ticket_type",
+              "fieldValue": "={{ $json.ticket_type }}"
+            },
+            {
+              "fieldId": "chat_id",
+              "fieldValue": "={{ $json.chat_id }}"
+            },
+            {
+              "fieldId": "user_name",
+              "fieldValue": "={{ $json.user_name }}"
+            },
+            {
+              "fieldId": "days_without_service",
+              "fieldValue": "={{ $json.days_without_service }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "sla_deadline",
+              "fieldValue": "={{ $json.sla_deadline }}"
+            },
+            {
+              "fieldId": "address",
+              "fieldValue": "={{ $json.address }}"
+            },
+            {
+              "fieldId": "live_chat_url",
+              "fieldValue": "={{ $json.live_chat_url }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        400
+      ],
+      "id": "91c77828-d029-4043-8d17-7f815bc870e0",
+      "name": "Create a row1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Ubh6Mgod1BscFiV4",
+          "name": "Supabase ambiente"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "tickets",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "ticket_type",
+              "fieldValue": "={{ $json.ticket_type }}"
+            },
+            {
+              "fieldId": "chat_id",
+              "fieldValue": "={{ $json.chat_id }}"
+            },
+            {
+              "fieldId": "user_name",
+              "fieldValue": "={{ $json.user_name }}"
+            },
+            {
+              "fieldId": "days_without_service",
+              "fieldValue": "={{ $json.days_without_service }}"
+            },
+            {
+              "fieldId": "status",
+              "fieldValue": "={{ $json.status }}"
+            },
+            {
+              "fieldId": "sla_deadline",
+              "fieldValue": "={{ $json.sla_deadline }}"
+            },
+            {
+              "fieldId": "address",
+              "fieldValue": "={{ $json.address }}"
+            },
+            {
+              "fieldId": "live_chat_url",
+              "fieldValue": "={{ $json.live_chat_url }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        112,
+        112
+      ],
+      "id": "b5b6f4ac-6947-4284-b753-4eac0bdc16fe",
+      "name": "Create a row2",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Ubh6Mgod1BscFiV4",
+          "name": "Supabase ambiente"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Obtener resultados de los nodos anteriores\n// IMPORTANTE: Asegúrate de que los nombres de los nodos coincidan\nlet tickets = [];\nlet programs = [];\n\nconst chatId = $('Webhook1').first().json.body.id;\n\ntry {\n    // Si tu nodo se llama distinto, cambia 'Get Tickets' por el nombre real\n    tickets = $('Get Tickets').all().map(i => i.json);\n} catch (e) { }\n\ntry {\n    // Idem para programas\n    programs = $('Get Program Requests').all().map(i => i.json);\n} catch (e) { }\n\nconst allRecords = [...tickets, ...programs];\n\n// Ordenar por fecha (más reciente primero)\nallRecords.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));\n\nlet message = \"\";\n\nif (allRecords.length === 0) {\n  message = \"No encontré trámites registrados con tu número en nuestro sistema. 🌱\";\n} else {\n  message = \"📋 *Tus Trámites Registrados:*\\n\\n\";\n\n  allRecords.forEach((record, index) => {\n    const date = new Date(record.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' });\n    const isTicket = record.ticket_type !== undefined;\n\n    // Icono según estado\n    let statusIcon = \"⚪\";\n    const status = record.status || \"Pendiente\";\n    if (status.toLowerCase().includes(\"pendiente\")) statusIcon = \"🟡\";\n    if (status.toLowerCase().includes(\"proceso\") || status.toLowerCase().includes(\"contactado\")) statusIcon = \"🔵\";\n    if (status.toLowerCase().includes(\"resuelto\") || status.toLowerCase().includes(\"cerrado\")) statusIcon = \"🟢\";\n    if (status.toLowerCase().includes(\"rechazado\")) statusIcon = \"🔴\";\n\n    message += `*${index + 1}.* `;\n    \n    if (isTicket) {\n      message += `*${record.ticket_type}* (${date})\\n`;\n      message += `   📍 ${record.address}\\n`;\n    } else {\n      const programType = record.program_type ? record.program_type.toUpperCase() : \"PROGRAMA\";\n      message += `*Solicitud ${programType}* (${date})\\n`;\n    }\n    \n    message += `   Estado: ${statusIcon} _${status}_\\n\\n`;\n  });\n  \n  message += \"\";\n}\n\nreturn { json: { response_text: message, chat_id: chatId } };"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        96,
+        752
+      ],
+      "id": "84c428a2-5019-4389-8df6-22a34bfd9524",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "program_requests",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Webhook1').item.json.body.whatsapp_phone }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -144,
+        752
+      ],
+      "id": "e764dbf8-548c-4644-b6aa-4f885a1143dc",
+      "name": "Get Program Requests",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Ubh6Mgod1BscFiV4",
+          "name": "Supabase ambiente"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "tickets",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $('Webhook1').item.json.body.whatsapp_phone }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -336,
+        752
+      ],
+      "id": "f43d726f-fecb-471f-8356-799b07c24fcf",
+      "name": "Get Tickets",
+      "credentials": {
+        "supabaseApi": {
+          "id": "Ubh6Mgod1BscFiV4",
+          "name": "Supabase ambiente"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.manychat.com/fb/sending/sendContent",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"subscriber_id\": {{ $json.chat_id }},\n  \"data\": {\n    \"version\": \"v2\",\n    \"content\": {\n      \"type\": \"whatsapp\",\n      \"messages\": [\n        {\n          \"type\": \"text\",\n          \"text\": {{ JSON.stringify($json.response_text) }}\n        }\n      ]\n    }\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        304,
+        752
+      ],
+      "id": "57cca129-22e1-47a8-a591-700a089bd77f",
+      "name": "HTTP Request5",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "q0FwYmwx2wldyJEh",
+          "name": "manychat ambiente"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-5.2",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        -1280,
+        752
+      ],
+      "id": "241dc5ed-0a72-4a1d-9393-bc4098130a5b",
+      "name": "OpenRouter Ambiente",
+      "credentials": {
+        "openRouterApi": {
+          "id": "6AN7xxyZn9H34zGM",
+          "name": "OpenRouter ambiente"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Workflow Configuration": {
+      "main": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Main AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Route by Intent",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Conversation Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Intent": {
+      "main": [
+        [
+          {
+            "node": "Check Photo Received",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Reclamo Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Program Request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get Tickets",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Photo Received": {
+      "main": [
+        [
+          {
+            "node": "Prepare Retiro Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Retiro Ticket": {
+      "main": [
+        [
+          {
+            "node": "Create a row2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Reclamo Ticket": {
+      "main": [
+        [
+          {
+            "node": "Create a row1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Program Request": {
+      "main": [
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check if Photo Attached": {
+      "main": [
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Workflow Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Check if Photo Attached",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Route by Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Program Requests": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tickets": {
+      "main": [
+        [
+          {
+            "node": "Get Program Requests",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Ambiente": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Main AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "fa4ff299-606d-4304-b6a9-36feaceea720",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "bdf27f1e08441fdcec6665bebad804e26077b69cfae1a31752f265dac4f965fe"
+  },
+  "id": "7GXouryyC8opswXz",
+  "tags": []
+}

@@ -1,0 +1,11 @@
+node_modules/
+.env
+*.log
+package-lock.json
+ecosystem.config.js
+.DS_Store
+dist/
+build/
+.vscode/
+.idea/
+/tmp/
